@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
- 
+var request = require('request');
+
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -17,7 +18,7 @@ exports.paths = {
 };
 
 // Used for stubbing paths for tests, do not modify
-exports.initialize = function(pathsObj){
+exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
     exports.paths[type] = path;
   });
@@ -26,17 +27,56 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(callback) {
+  fs.readFile(exports.paths.list, function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      callback(data.toString().split('\n'));
+    }
+  })
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(url, callback) {
+  fs.readFile(exports.paths.list, function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      callback(data.toString().split('\n').indexOf(url) !== -1);
+    }
+  })
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(url, callback) {
+  fs.appendFile(exports.paths.list, url + "\n", function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      callback && callback(data)
+    }
+  });
+
 };
 
-exports.isUrlArchived = function(){
+exports.isUrlArchived = function(url, callback) {
+  fs.access(exports.paths.archivedSites + url, fs.R_OK, function(err, data) {
+    if (err) {
+      callback(false);
+    } else {
+      callback(true)
+    }
+  });
 };
 
-exports.downloadUrls = function(){
+exports.downloadUrls = function(urls) {
+  _.each(urls, function(url) {
+    exports.isUrlArchived(url, function(data) {
+      if (!data) {
+        exports.addUrlToList(url);
+        request.get('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
+      }
+    });
+  });
 };
+
+
