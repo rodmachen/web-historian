@@ -13,7 +13,8 @@ exports.handleRequest = function(req, res) {
     });
 
     req.on('end', function() {
-      fs.appendFile(archive.paths.list, JSON.parse(msg).url + "\n", function(err, data) {
+
+      fs.appendFile(archive.paths.list, msg.split('=')[1] + '\n', function(err, data) {
         if (err) {
           throw err;
         } else {

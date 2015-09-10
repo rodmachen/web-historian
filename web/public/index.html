@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="styles.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+  <style type="text/css">
+    body {
+      margin : 0px;
+      font-family: arial, sans-serif;
+      background-color: #990000;
+      color: #eeeeee;
+      position: relative;
+    }
+    .main {
+      text-align: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%); 
+    }
+    h1 {
+      font-size: 6em;
+    }
+    h2 {
+      font-size: 2em;
+      font-family: times, serif;
+    }
+    form {
+      height: 2em;
+    }
+
+  </style>
 </head>
 <body>
-  Enter a URL here:
-  <form method="POST">
-    <input type="input" name="url"></input>
-  </form>
+  <div class="main">
+    <h1 class="title">Save-A-Site</h1>
+    <h2>Enter a URL here:</h2>
+    <form method="POST">
+      <input type="input" name="url"></input>
+    </form>
+  </div>
 </body>
 </html>
